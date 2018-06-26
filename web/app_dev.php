@@ -15,6 +15,8 @@ if ($dockerBridgeIp = getenv('DOCKER_BRIDGE_IP')) {
     $whiteListedAddresses[] = $dockerBridgeIp;
 }
 
+$whiteListedAddresses[] = '172.18.0.18';
+
 if (isset($_SERVER['HTTP_CLIENT_IP'])
     || isset($_SERVER['HTTP_X_FORWARDED_FOR'])
     || !(in_array(@$_SERVER['REMOTE_ADDR'], $whiteListedAddresses) || php_sapi_name() === 'cli-server')
