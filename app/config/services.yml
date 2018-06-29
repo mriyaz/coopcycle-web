@@ -479,3 +479,20 @@ services:
           - '@coopcycle.settings_manager'
           - '%country_iso%'
           - '%coopcycle.locale%'
+
+  'AppBundle\Action\Pricing':
+      arguments:
+          - '@coopcycle.settings_manager'
+          - '@coopcycle.delivery.manager'
+          - '@routing_service'
+          - '@security.token_storage'
+          - '%coopcycle.locale%'
+
+  'AppBundle\Security\StoreTokenAuthenticator':
+      arguments:
+          - '@doctrine'
+
+  'AppBundle\Security\StoreTokenUserProvider':
+      arguments:
+          - '@fos_user.user_manager'
+          - '@doctrine'
