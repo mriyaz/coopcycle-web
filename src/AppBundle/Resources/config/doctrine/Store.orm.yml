@@ -63,6 +63,11 @@ AppBundle\Entity\Store:
             joinColumns:
                 address_id:
                     referencedColumnName: id
+        token:
+            targetEntity: AppBundle\Entity\Store\Token
+            mappedBy: store
+            cascade:
+                - all
     manyToOne:
         stripeAccount:
             targetEntity: AppBundle\Entity\StripeAccount
