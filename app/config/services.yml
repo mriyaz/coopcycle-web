@@ -488,6 +488,16 @@ services:
           - '@security.token_storage'
           - '%coopcycle.locale%'
 
+  'AppBundle\Action\CreateStoreDelivery':
+      arguments:
+          - '@coopcycle.settings_manager'
+          - '@coopcycle.delivery.manager'
+          - '@routing_service'
+          - '@security.token_storage'
+          - '@serializer'
+          - '@doctrine'
+          - '%coopcycle.locale%'
+
   'AppBundle\Security\StoreTokenAuthenticator':
       arguments:
           - '@doctrine'
