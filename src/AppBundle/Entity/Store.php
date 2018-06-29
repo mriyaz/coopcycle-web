@@ -89,6 +89,8 @@ class Store extends LocalBusiness
 
     private $deliveries;
 
+    private $token;
+
     public function __construct() {
         $this->deliveries = new ArrayCollection();
     }
@@ -252,4 +254,15 @@ class Store extends LocalBusiness
         $this->deliveries = $deliveries;
     }
 
+    public function getToken()
+    {
+        return $this->token;
+    }
+
+    public function setToken($token)
+    {
+        $this->token = $token;
+
+        return $this;
+    }
 }
