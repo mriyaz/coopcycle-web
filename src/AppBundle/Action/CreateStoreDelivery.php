@@ -74,11 +74,16 @@ class CreateStoreDelivery
         $address = $data['dropoff']['address'];
 
         $results = $this->geocoder->geocodeQuery(GeocodeQuery::create($address));
-        [ $longitude, $latitude ] = $results->first()->getCoordinates()->toArray();
+        $result = $results->first();
+
+        [ $longitude, $latitude ] = $result->getCoordinates()->toArray();
 
         $pickupAddress = $store->getAddress();
 
         $dropoffAddress = new Address();
+        $dropoffAddress->setStreetAddress(sprintf('%s %s', $result->getStreetNumber(), $result->getStreetName()));
+        $dropoffAddress->setPostalCode($result->getPostalCode());
+        $dropoffAddress->setAddressLocality($result->getLocality());
         $dropoffAddress->setGeo(new GeoCoordinates($latitude, $longitude));
 
         $data = $this->routing->getRawResponse(
@@ -88,23 +93,24 @@ class CreateStoreDelivery
 
         $distance = $data['routes'][0]['distance'];
 
-        $delivery = new Delivery();
-        $delivery->getPickup()->setAddress($pickupAddress);
-        $delivery->getDropoff()->setAddress($dropoffAddress);
-        $delivery->setVehicle(Delivery::VEHICLE_BIKE);
-        // $delivery->setWeight($request->query->get('weight', null));
-        $delivery->setDistance($distance);
-
         $dropoffDoneBefore = new \DateTime();
         $dropoffDoneBefore->modify('+1 day');
 
         $pickupDoneBefore = clone $dropoffDoneBefore;
         $pickupDoneBefore->modify('-1 hour');
 
+        $delivery = new Delivery();
+        $delivery->getPickup()->setAddress($pickupAddress);
+        $delivery->getPickup()->setDoneBefore($pickupDoneBefore);
+        $delivery->getDropoff()->setAddress($dropoffAddress);
+        $delivery->getDropoff()->setDoneBefore($dropoffDoneBefore);
+        $delivery->setVehicle(Delivery::VEHICLE_BIKE);
+        $delivery->setDistance($distance);
+
         $this->doctrine->getManagerForClass(Delivery::class)->persist($delivery);
         $this->doctrine->getManagerForClass(Delivery::class)->flush();
 
-        $normalized = $this->serializer->normalize($delivery, 'json', [
+        $normalized = $this->serializer->normalize($delivery, 'jsonld', [
             'resource_class' => Delivery::class,
             'operation_type' => 'item',
             'item_operation_name' => 'get'
