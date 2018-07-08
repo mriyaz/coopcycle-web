@@ -18,6 +18,12 @@ services:
     ports:
       - '6379:6379'
 
+  redisearch:
+    restart: always
+    image: redislabs/redisearch:1.2.0
+    ports:
+      - '6380:6379'
+
   nodejs:
     build:
       dockerfile: './docker/nodejs/Dockerfile'
@@ -59,6 +65,7 @@ services:
     depends_on:
       - postgres
       - redis
+      - redisearch
       - osrm
       - graphite
       - stripe_mock
@@ -66,6 +73,7 @@ services:
       - osrm
       - graphite
       - stripe_mock
+      # - redisearch
     environment:
       SYMFONY_ENV: 'dev'
     volumes:

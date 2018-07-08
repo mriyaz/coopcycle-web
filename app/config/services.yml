@@ -447,6 +447,13 @@ services:
       - "%apns_certificate_pass_phrase%"
       - "%fcm_server_api_key%"
 
+  coopcycle.search:
+    class: AppBundle\Service\Search
+    arguments:
+      - '%redisearch_host%'
+      - '%redisearch_port%'
+      - '%database_name%'
+
   'AppBundle\Validator\Constraints\CartValidator':
     arguments: [ '@routing_service' ]
     tags:

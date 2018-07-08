@@ -41,6 +41,9 @@ parameters:
     redis_host: redis
     redis_dsn: redis://%redis_host%:6379
 
+    redisearch_host: redisearch
+    redisearch_port: 6379
+
     osrm_host: "osrm:5000"
 
     app.name: default
