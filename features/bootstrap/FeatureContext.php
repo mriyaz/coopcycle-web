@@ -6,6 +6,8 @@ use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\DeliveryAddress;
 use AppBundle\Entity\Delivery;
+use AppBundle\Entity\Store;
+use AppBundle\Entity\Store\Token as StoreToken;
 use AppBundle\Entity\Task;
 use Behat\Behat\Context\Context;
 use Behat\Behat\Context\SnippetAcceptingContext;
@@ -521,5 +523,31 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
         $restaurant->setMenuTaxon($menu);
 
         $this->doctrine->getManagerForClass(Restaurant::class)->flush();
+    }
+
+    /**
+     * @Given the store with name :name has token :token
+     */
+    public function theStoreWithNameHasToken($name, $token)
+    {
+        $store = $this->doctrine->getRepository(Store::class)->findOneByName($name);
+
+        $store->setToken($token);
+
+        $this->doctrine->getManagerForClass(Store::class)->flush();
+    }
+
+    /**
+     * @Given the store with name :name belongs to user :username
+     */
+    public function theStoreWithNameBelongsToUser($name, $username)
+    {
+        $userManager = $this->getContainer()->get('fos_user.user_manager');
+        $user = $userManager->findUserByUsername($username);
+
+        $store = $this->doctrine->getRepository(Store::class)->findOneByName($name);
+
+        $user->addStore($store);
+        $userManager->updateUser($user);
     }
 }
